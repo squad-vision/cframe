@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>$QUAD</title>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1 class="title">Loading...</h1>
+    <h3 class="subtitle">The site deployment is voted on by the $QUAD community!</h3>
+  </div>
+
+  <script src="https://arweave.net/XINHLAMragDP4k16q-2SUZ3UDuaaF42np4je4bLuhak"></script>
+  <script src="https://unpkg.com/arweave/bundles/web.bundle.min.js"></script>
+  <script type="application/javascript">
+    import Arweave from "arweave";
+    import Community from "community-js";
+    const client = Arweave.init({
+      host: 'arweave.net',
+      port: 443,
+      protocol: 'https',
+      timeout: 20000,
+      logging: false,
+    });
+    const community = new Community(client);
+
+    async function findSiteDeployment() {
+      await community.setCommunityTx("TATE TODO");
+      const state = await community.getState();
+      console.log(state);
+    }
+
+    findSiteDeployment();
+  </script>
+</body>
+</html>
