@@ -3,38 +3,93 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
+  <link
+    rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤙</text></svg>"
+  />
   <title>$QUAD</title>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1 class="title">Loading...</h1>
-    <h3 class="subtitle">The site deployment is voted on by the $QUAD community!</h3>
+  <iframe id="communityDeployment" class="invisible" src="" width="100%" height="100%" frameborder="0"></iframe>
+  <div id="container">
+    <h1 class="title">Loading... ⌛</h1>
+    <h3 class="subtitle">The site deployment is voted on by the <span class="code">$QUAD</span> community!</h3>
   </div>
 
-  <script src="https://arweave.net/XINHLAMragDP4k16q-2SUZ3UDuaaF42np4je4bLuhak"></script>
-  <script src="https://unpkg.com/arweave/bundles/web.bundle.min.js"></script>
-  <script type="application/javascript">
-    import Arweave from "arweave";
-    import Community from "community-js";
-    const client = Arweave.init({
-      host: 'arweave.net',
-      port: 443,
-      protocol: 'https',
-      timeout: 20000,
-      logging: false,
-    });
-    const community = new Community(client);
-
+  <script type="text/javascript">
     async function findSiteDeployment() {
-      await community.setCommunityTx("TATE TODO");
-      const state = await community.getState();
-      console.log(state);
+      const rawState = await fetch(
+        "https://cache.community.xyz/contract/bG4FzHB19RclVEU3pimgtw1oijono0y-XfDRZR_Nlhc"
+      );
+      const state = await rawState.clone().json();
+      const deploymentElement = document.getElementById("communityDeployment");
+      const loadingElement = document.getElementById("container");
+      for (setting of state.settings) {
+        if (setting[0] === "siteDeployment") {
+          // Found site deployment setting
+          if (setting[1] === "") {
+            // No setting yet. Load default
+            deploymentElement.src = "https://arweave.net/oJXXpgdaYmQEsaCwxLUi8qXCYYQ2Am-ohWP5q5h_-Xg/";
+            deploymentElement.classList.remove("invisible");
+            loadingElement.classList.add("invisible");
+          } else {
+            deploymentElement.src = `https://arweave.net/${setting[1]}`;
+            deploymentElement.classList.remove("invisible");
+            loadingElement.classList.add("invisible");
+          }
+        }
+      }
     }
 
     findSiteDeployment();
   </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+    .code {
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    .invisible {
+      display: none;
+    }
+
+    h1.title, h3.subtitle {
+      font-family: 'Inter', sans-serif;
+    }
+
+    #container {
+      text-align: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    h1.title {
+      margin-bottom: 0;
+    }
+
+    h3.subtitle {
+      margin-top: 1em;
+      font-weight: 400;
+    }
+
+    #communityDeployment {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  </style>
 </body>
 </html>
